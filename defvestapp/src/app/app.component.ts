@@ -10,4 +10,15 @@ import PouchDB from 'pouchdb';
 export class AppComponent {
   title = 'defvestapp';
   db = new PouchDB('http://localhost:5984/countries');
+  constructor(){
+  }
+
+
+
+  ngOnInit(){
+  this.db.info().then(function (info) {
+    console.log(info);
+  })
+}
+  
 }
