@@ -10,6 +10,11 @@ import PouchDB from 'pouchdb';
 export class AppComponent {
   title = 'defvestapp';
   db = new PouchDB('http://localhost:5984/countries');
+  dummie={
+    "_id":"Germany",
+    "capital":"Berlin",
+    "residents": 80000000
+  }
   constructor(){
   }
 
@@ -20,5 +25,17 @@ export class AppComponent {
     console.log(info);
   })
 }
+
+  addDummie(){
+      this.db.put(this.dummie);
+      console.log("addedDummie");
+  }
+
+  getDummie(){
+    this.db.get("Germany").then(function (dummie){
+      console.log(dummie);
+      console.log("Got Dummie");
+    })
+  }
   
 }
