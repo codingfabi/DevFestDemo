@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import PouchDB from 'pouchdb';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
