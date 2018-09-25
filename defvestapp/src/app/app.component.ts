@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import PouchDB from 'pouchdb';
+import {FormGroup, FormBuilder, Validators}  from '@angular/forms';
+import {countrieModel} from './models/countrieModel';
+import { ValueTransformer } from '@angular/compiler/src/util';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +17,11 @@ export class AppComponent {
     "capital":"Berlin",
     "residents": 80000000
   }
-  constructor(){
+
+  countrie : countrieModel = new countrieModel();
+  countrieForm: FormGroup;
+
+  constructor(private formBuilder: FormBuilder){
   }
 
 
@@ -23,6 +30,19 @@ export class AppComponent {
   this.db.info().then(function (info) {
     console.log(info);
   })
+
+  this.countrieForm = this.formBuilder.group({
+      'name': [this.countrie.name, [
+          Validators.required        
+      ]],
+      'capital': [this.countrie.capital, [
+          Validators.required
+        ]],
+      'residents' : [this.countrie.residents, [ 
+          Validators.required
+        ]]
+  })
+
 }
 
   addDummie(){
@@ -35,6 +55,10 @@ export class AppComponent {
       console.log(dummie);
       console.log("Got Dummie");
     })
+  }
+
+  addCountrie(){
+      console.log(this.countrie.name, this.countrie.capital, this.countrie.residents)
   }
   
 }

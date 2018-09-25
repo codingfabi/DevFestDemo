@@ -19,22 +19,27 @@
 </ul>
 -->
 
-<form class="country-form">
+
+
+<form [formGroup] = 'countrieForm' novalidate (ngSubmit)="countrieForm.valid && addCountrie()">
   <mat-form-field>
-    <input matInput placeholder="Country">
+    <input matInput placeholder="" id="countrie" formControlName='name' [(ngModel)]="countrie.name" />
   </mat-form-field>
 
   <mat-form-field>
-    <textarea matInput placeholder="Residents"></textarea>
+    <input matInput placeholder="" id="residents" formControlName='residents' [(ngModel)]="countrie.residents"/>
   </mat-form-field>
 
   
   <mat-form-field>
-    <textarea matInput placeholder="captial"></textarea>
+    <input matInput placeholder="" id="capital" formControlName='capital' [(ngModel)]="countrie.capital"/>
   </mat-form-field>
+
+  <button mat-button class="mat-raised-button" type="submit" >Add Countrie</button>
 
 </form>
 
+
+
 <button (click)="addDummie()">Add Dummie to Database</button>
 <button (click)="getDummie()">Get Dummie from Database</button>
-
