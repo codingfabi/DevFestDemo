@@ -1,7 +1,7 @@
 export class countrieModel{
 
-    name: String;
-    capital: String;
+    name: string;
+    capital: string;
     residents: Number;    
 
 

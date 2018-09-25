@@ -17,9 +17,11 @@ export class AppComponent {
     "capital":"Berlin",
     "residents": 80000000
   }
+  searchString: string;
 
   countrie : countrieModel = new countrieModel();
   countrieForm: FormGroup;
+  searchForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder){
   }
@@ -42,9 +44,27 @@ export class AppComponent {
           Validators.required
         ]]
   })
-
+  this.searchForm = this.formBuilder.group({
+      'search': [this.searchString, [
+          Validators.required        
+      ]]
+  })
 }
 
+  addToDB(doc){
+    this.db.put(doc);
+    console.log("Added this doc: \n", doc);
+  }
+
+  getFromDB(id){
+
+    if(id===undefined){
+      console.log("ID is undef");
+    }
+    this.db.get(id).then(function(countrie){
+      console.log(countrie);
+    })
+  }
   addDummie(){
       this.db.put(this.dummie);
       console.log("addedDummie");
@@ -58,7 +78,21 @@ export class AppComponent {
   }
 
   addCountrie(){
-      console.log(this.countrie.name, this.countrie.capital, this.countrie.residents)
-  }
+
+      var tempCountrie = {
+        "_id":this.countrie.name,
+        "capital":this.countrie.capital,
+        "residents":this.countrie.residents
+      };
+
+      this.addToDB(tempCountrie);
+      //this.getFromDB(this.countrie.name);
+    }
   
+  searchDB(){
+    console.log(this.searchString);
+    this.db.get(this.searchString).then(function(countrie){
+      console.log(countrie);
+    });
+  }
 }

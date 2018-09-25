@@ -39,7 +39,11 @@
 
 </form>
 
+<form [formGroup]='searchForm' novalidate (ngSubmit)="searchForm.valid && searchDB()">
+  <mat-form-field>
+    <input matInput id="search" formControlName="search" [(ngModel)]="searchString"/>
+  </mat-form-field>
 
+  <button mat-button type="submit">Search for Countrie</button>
+</form>
 
-<button (click)="addDummie()">Add Dummie to Database</button>
-<button (click)="getDummie()">Get Dummie from Database</button>
