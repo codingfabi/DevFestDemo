@@ -1,4 +1,17 @@
 
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
+#inputform{
+
+    border-bottom-color: black;
+    border-bottom-style: dotted;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.containerdiv{
+    display: flex;
+    flex-direction: column;
+}
+
 
