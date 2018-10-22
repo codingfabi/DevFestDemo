@@ -56,6 +56,8 @@ export class AppComponent {
     console.log("Added this doc: \n", doc);
   }
 
+
+  //gest specific source
   getFromDB(id){
 
     if(id===undefined){
@@ -65,6 +67,17 @@ export class AppComponent {
       console.log(countrie);
     })
   }
+
+  getAllfromDB(){
+    console.log("alldocsusef");
+    this.db.allDocs({
+    }).then(function (result){
+      console.log(result);
+    }).catch( function (err){
+      console.log(err);
+    });
+  }
+
   addDummie(){
       this.db.put(this.dummie);
       console.log("addedDummie");

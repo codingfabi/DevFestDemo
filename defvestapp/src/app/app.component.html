@@ -23,15 +23,15 @@
 <div class="containerdiv">
 <form id = "inputform" [formGroup] = 'countrieForm' novalidate (ngSubmit)="countrieForm.valid && addCountrie()">
   <mat-form-field>
-    <input matInput placeholder="Countrie" id="countrie" formControlName='name' [(ngModel)]="countrie.name" />
+    <input matInput placeholder="" id="countrie" formControlName='name' [(ngModel)]="countrie.name" />
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput placeholder="Residents" id="residents" formControlName='residents' [(ngModel)]="countrie.residents"/>
+    <input matInput placeholder="" id="residents" formControlName='residents' [(ngModel)]="countrie.residents"/>
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput placeholder="Capital" id="capital" formControlName='capital' [(ngModel)]="countrie.capital"/>
+    <input matInput placeholder="safsd" id="capital" formControlName='capital' [(ngModel)]="countrie.capital"/>
   </mat-form-field>
   <button mat-button class="mat-raised-button" type="submit" >Add Countrie</button>
 </form>
@@ -42,5 +42,7 @@
   </mat-form-field>
   <button mat-button class="mat-raised-button" type="submit">Search for Countrie</button>
 </form>
+
+<button mat-button class="mat-raised-button" (click)="getAllfromDB()">Get All from DB</button>
 
 </div>
