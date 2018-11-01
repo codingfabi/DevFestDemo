@@ -2,7 +2,10 @@ import { Component } from '@angular/core';
 import PouchDB from 'pouchdb';
 import {FormGroup, FormBuilder, Validators}  from '@angular/forms';
 import {countrieModel} from './models/countrieModel';
+import PouchDBAuthentication from 'pouchdb-authentication'; 
 import { ValueTransformer } from '@angular/compiler/src/util';
+
+PouchDB.plugin(PouchDBAuthentication);
 
 @Component({
   selector: 'app-root',
@@ -11,7 +14,8 @@ import { ValueTransformer } from '@angular/compiler/src/util';
 })
 export class AppComponent {
   title = 'defvestapp';
-  db = new PouchDB('http://localhost:5984/countries');
+  private _remoteDatabase: any;
+  db = new PouchDB('countires');
   dummie={
     "_id":"Germany",
     "capital":"Berlin",
@@ -24,15 +28,44 @@ export class AppComponent {
   searchForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder){
+    this._remoteDatabase = new PouchDB('http://192.168.178.55:5984/countries',
+      {
+
+        ajax: {
+          rejectUnauthorized: false, timeout: 60000,
+        },
+        // This is a workaround for PouchDB 7.0.0 with pouchdb-authentication 1.1.3:
+        // https://github.com/pouchdb-community/pouchdb-authentication/issues/239
+        // It is necessary, until this merged PR will be published in PouchDB 7.0.1
+        // https://github.com/pouchdb/pouchdb/pull/7395
+        fetch(url, opts) {
+          opts.credentials = 'include';
+          return (PouchDB as any).fetch(url, opts);
+        },
+        skip_setup: true,
+      } as PouchDB.Configuration.RemoteDatabaseConfiguration
+    );
+    const ajaxOpts = {
+      ajax: {
+        headers: {
+          Authorization: 'Basic ' + window.btoa('testuser' + ':' + 'pass')
+        }
+      }
+    }
+    this._remoteDatabase.logIn('testuser', 'pass', ajaxOpts).then(() =>{
+      console.log("Login Succesfull");
+      this._remoteDatabase.info().then(function (info) {
+        console.log(info);
+      })
+    })
+    
   }
 
 
 
-  ngOnInit(){
-  this.db.info().then(function (info) {
-    console.log(info);
-  })
+ 
 
+  ngOnInit(){
   this.countrieForm = this.formBuilder.group({
       'name': [this.countrie.name, [
           Validators.required        
@@ -49,6 +82,7 @@ export class AppComponent {
           Validators.required        
       ]]
   })
+  PouchDB.sync(this.db, this._remoteDatabase);
 }
 
   addToDB(doc){
@@ -57,7 +91,7 @@ export class AppComponent {
   }
 
 
-  //gest specific source
+  //get specific source
   getFromDB(id){
 
     if(id===undefined){
@@ -69,7 +103,7 @@ export class AppComponent {
   }
 
   getAllfromDB(){
-    console.log("alldocsusef");
+    console.log("alldocs");
     this.db.allDocs({
     }).then(function (result){
       console.log(result);
