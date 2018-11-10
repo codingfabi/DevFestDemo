@@ -3,6 +3,7 @@ import PouchDB from 'pouchdb';
 import PouchDBAuthentication from 'pouchdb-authentication'; 
 import { FormGroup, FormBuilder, Validators }  from '@angular/forms';
 import { countryModel } from './models/countryModel';
+import { config } from './config'
 
 PouchDB.plugin(PouchDBAuthentication);
 
@@ -13,8 +14,21 @@ PouchDB.plugin(PouchDBAuthentication);
 })
 export class AppComponent {
   title = 'devfestapp';
-  private _remoteDatabase: any;
-  db = new PouchDB('countries');
+  private _remoteDatabase = new PouchDB(`${config.remoteUrl}/${config.db}`, {
+    ajax: {
+      rejectUnauthorized: false, timeout: 60000,
+    },
+    // This is a workaround for PouchDB 7.0.0 with pouchdb-authentication 1.1.3:
+    // https://github.com/pouchdb-community/pouchdb-authentication/issues/239
+    // It is necessary, until this merged PR will be published in PouchDB 7.0.1
+    // https://github.com/pouchdb/pouchdb/pull/7395
+    fetch(url, opts) {
+      opts.credentials = 'include';
+      return (PouchDB as any).fetch(url, opts);
+    },
+    skip_setup: true,
+  } as PouchDB.Configuration.RemoteDatabaseConfiguration);
+  private _localDatabase = new PouchDB(config.db);
 
   //initilize Variable for MatForms
   deleteString: string;
@@ -25,32 +39,16 @@ export class AppComponent {
   searchForm: FormGroup;
   deleteForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder){
-    this._remoteDatabase = new PouchDB('http://localhost:5984/countries',
-      {
-        ajax: {
-          rejectUnauthorized: false, timeout: 60000,
-        },
-        // This is a workaround for PouchDB 7.0.0 with pouchdb-authentication 1.1.3:
-        // https://github.com/pouchdb-community/pouchdb-authentication/issues/239
-        // It is necessary, until this merged PR will be published in PouchDB 7.0.1
-        // https://github.com/pouchdb/pouchdb/pull/7395
-        fetch(url, opts) {
-          opts.credentials = 'include';
-          return (PouchDB as any).fetch(url, opts);
-        },
-        skip_setup: true,
-      } as PouchDB.Configuration.RemoteDatabaseConfiguration
-    );
+  constructor(private formBuilder: FormBuilder) {
     const ajaxOpts = {
       ajax: {
         headers: {
-          Authorization: 'Basic ' + window.btoa('testuser' + ':' + 'pass')
+          Authorization: 'Basic ' + window.btoa(`${config.user}:${config.password}`)
         }
       }
     }
-    this._remoteDatabase.logIn('testuser', 'pass', ajaxOpts).then(() =>{
-      console.log("Login Succesfull");
+    this._remoteDatabase.logIn(config.user, config.password, ajaxOpts).then(() =>{
+      console.log("Login Successful");
       this._remoteDatabase.info().then(function (info) {
         console.log(info);
       })
@@ -81,28 +79,27 @@ export class AppComponent {
       Validators.required
     ]]
   });
-  PouchDB.sync(this.db, this._remoteDatabase);
+  PouchDB.sync(this._localDatabase, this._remoteDatabase);
 }
 
   addToDB(doc){
-    this.db.put(doc);
+    this._localDatabase.put(doc);
     console.log("Added this doc: \n", doc);
   }
 
 
   //get specific source
   getFromDB(id){
-
-    this.db.get(id).then(function(country){
+    this._localDatabase.get(id).then(function(country){
       console.log(country);
     }).catch(function(err){
       console.log(err);
     })  
   }
 
-  getAllfromDB(){
+  getAllFromDB(){
     console.log("alldocs");
-    this.db.allDocs({
+    this._localDatabase.allDocs({
     }).then(function (result){
       console.log(result);
     }).catch( function (err){
@@ -111,7 +108,6 @@ export class AppComponent {
   }
 
   addCountry(){
-
       var tempcountry = {
         "_id":this.country.name,
         "capital":this.country.capital,
@@ -119,20 +115,20 @@ export class AppComponent {
       };
 
       //check if country is allready existing, if so just update, else add new. I know it is not single responsibility, but it saves time. 
-      this.db.get(this.country.name).then((doc)=> {
-        if(doc===undefined){
-          this.db.put(tempcountry);
+      this._localDatabase.get(this.country.name).then((doc)=> {
+        if(doc === undefined){
+          this._localDatabase.put(tempcountry);
         }
         else{
           tempcountry["_rev"]=doc._rev;
-          this.db.put(tempcountry);
+          this._localDatabase.put(tempcountry);
         }
       });
     }
   
   searchDB(){
     console.log(this.searchString);
-    this.db.get(this.searchString).then(function(country){
+    this._localDatabase.get(this.searchString).then(function(country){
       console.log(country);
     }).catch(function (err){
       console.log(err);
@@ -140,10 +136,9 @@ export class AppComponent {
   }
 
   deleteCountry(){
-
     console.log(this.deleteString);
-    this.db.get(this.deleteString).then((country) => {
-      this.db.remove(country);
+    this._localDatabase.get(this.deleteString).then((country) => {
+      this._localDatabase.remove(country);
     }).catch(function (err){
       console.log(err);
     });
