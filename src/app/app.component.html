@@ -1,22 +1,22 @@
 <div class="containerdiv">
   <form id = "inputform" [formGroup] = 'countryForm' novalidate (ngSubmit)="countryForm.valid && addCountry()">
     <mat-form-field>
-      <input matInput placeholder="" id="country" formControlName='name' [(ngModel)]="country.name" />
+      <input matInput placeholder="Country Name" id="country" formControlName='name' [(ngModel)]="country.name" />
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="" id="residents" formControlName='residents' [(ngModel)]="country.residents"/>
+      <input matInput placeholder="Country Residents" id="residents" formControlName='residents' [(ngModel)]="country.residents"/>
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="safsd" id="capital" formControlName='capital' [(ngModel)]="country.capital"/>
+      <input matInput placeholder="Country Capital" id="capital" formControlName='capital' [(ngModel)]="country.capital"/>
     </mat-form-field>
     <button mat-button class="mat-raised-button" type="submit" >Add Country</button>
   </form>
 
   <form [formGroup]='searchForm' novalidate (ngSubmit)="searchForm.valid && searchDB()">
     <mat-form-field>
-      <input matInput id="search" formControlName="search" [(ngModel)]="searchString"/>
+      <input matInput placeholder="Country Name" id="search" formControlName="search" [(ngModel)]="searchString"/>
     </mat-form-field>
     <button mat-button class="mat-raised-button" type="submit">Search for Country</button>
   </form>
@@ -25,7 +25,7 @@
 
   <form [formGroup]='deleteForm' novalidate (ngSubmit)="searchForm.valid && deleteCountry()">
     <mat-form-field>
-      <input matInput id="delete" formControlName="delete" [(ngModel)]="deleteString"/>
+      <input matInput placeholder="Country Name" id="delete" formControlName="delete" [(ngModel)]="deleteString"/>
     </mat-form-field>
     <button mat-button class="mat-raised-button" type="submit">Delete Country</button>
   </form>

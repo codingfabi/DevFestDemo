@@ -46,14 +46,11 @@ export class AppComponent {
           Authorization: 'Basic ' + window.btoa(`${config.user}:${config.password}`)
         }
       }
-    }
-    this._remoteDatabase.logIn(config.user, config.password, ajaxOpts).then(() =>{
+    };
+    this._remoteDatabase.logIn(config.user, config.password, ajaxOpts).then(() => {
       console.log("Login Successful");
-      this._remoteDatabase.info().then(function (info) {
-        console.log(info);
-      })
-    })
-    
+      this._remoteDatabase.info().then(info => console.log(info));
+    });
   }
 
 
@@ -68,12 +65,12 @@ export class AppComponent {
       'residents' : [this.country.residents, [ 
           Validators.required
         ]]
-  })
+  });
   this.searchForm = this.formBuilder.group({
       'search': [this.searchString, [
           Validators.required        
       ]]
-  })
+  });
   this.deleteForm = this.formBuilder.group({
     'delete': [this.deleteString, [
       Validators.required
@@ -83,64 +80,53 @@ export class AppComponent {
 }
 
   addToDB(doc){
-    this._localDatabase.put(doc);
-    console.log("Added this doc: \n", doc);
+    return this._localDatabase.put(doc)
+      .then(() => console.log("Added this doc: \n", doc));
   }
-
 
   //get specific source
-  getFromDB(id){
-    this._localDatabase.get(id).then(function(country){
-      console.log(country);
-    }).catch(function(err){
-      console.log(err);
-    })  
+  getFromDB(id) {
+    this._localDatabase.get(id)
+      .then(country => console.log(country))
+      .catch(err => console.error(err)) 
   }
 
-  getAllFromDB(){
+  getAllFromDB() {
     console.log("alldocs");
-    this._localDatabase.allDocs({
-    }).then(function (result){
-      console.log(result);
-    }).catch( function (err){
-      console.log(err);
-    });
+    this._localDatabase.allDocs({})
+      .then(result => console.log(result))
+      .catch(err => console.error(err));
   }
 
-  addCountry(){
-      var tempcountry = {
-        "_id":this.country.name,
-        "capital":this.country.capital,
-        "residents":this.country.residents
+  addCountry() {
+      var tempCountry = {
+        "_id": this.country.name,
+        "capital": this.country.capital,
+        "residents": this.country.residents
       };
 
       //check if country is allready existing, if so just update, else add new. I know it is not single responsibility, but it saves time. 
       this._localDatabase.get(this.country.name).then((doc)=> {
         if(doc === undefined){
-          this._localDatabase.put(tempcountry);
+          return this._localDatabase.put(tempCountry);
+        } else {
+          tempCountry["_rev"] = doc._rev;
+          return this._localDatabase.put(tempCountry);
         }
-        else{
-          tempcountry["_rev"]=doc._rev;
-          this._localDatabase.put(tempcountry);
-        }
-      });
+      }).catch(err => console.error(err));
     }
   
-  searchDB(){
+  searchDB() {
     console.log(this.searchString);
-    this._localDatabase.get(this.searchString).then(function(country){
-      console.log(country);
-    }).catch(function (err){
-      console.log(err);
-    });
+    this._localDatabase.get(this.searchString)
+      .then(country => console.log(country))
+      .catch(err => console.error(err));
   }
 
-  deleteCountry(){
+  deleteCountry() {
     console.log(this.deleteString);
-    this._localDatabase.get(this.deleteString).then((country) => {
-      this._localDatabase.remove(country);
-    }).catch(function (err){
-      console.log(err);
-    });
+    this._localDatabase.get(this.deleteString)
+      .then(country => this._localDatabase.remove(country))
+      .catch(err => console.error(err));
   }
 }
