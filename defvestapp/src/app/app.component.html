@@ -45,4 +45,11 @@
 
 <button mat-button class="mat-raised-button" (click)="getAllfromDB()">Get All from DB</button>
 
+<form [formGroup]='deleteForm' novalidate (ngSubmit)="searchForm.valid && deleteCountrie()">
+  <mat-form-field>
+    <input matInput id="delete" formControlName="delete" [(ngModel)]="deleteString"/>
+  </mat-form-field>
+  <button mat-button class="mat-raised-button" type="submit">Delete Countrie</button>
+</form>
+
 </div>

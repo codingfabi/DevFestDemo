@@ -15,20 +15,19 @@ PouchDB.plugin(PouchDBAuthentication);
 export class AppComponent {
   title = 'defvestapp';
   private _remoteDatabase: any;
-  db = new PouchDB('countires');
-  dummie={
-    "_id":"Germany",
-    "capital":"Berlin",
-    "residents": 80000000
-  }
+  db = new PouchDB('countries');
+
+  //initilize Variable for MatForms
+  deleteString: string;
   searchString: string;
 
   countrie : countrieModel = new countrieModel();
   countrieForm: FormGroup;
   searchForm: FormGroup;
+  deleteForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder){
-    this._remoteDatabase = new PouchDB('http://192.168.178.55:5984/countries',
+    this._remoteDatabase = new PouchDB('http://localhost:5984/countries',
       {
 
         ajax: {
@@ -62,9 +61,6 @@ export class AppComponent {
   }
 
 
-
- 
-
   ngOnInit(){
   this.countrieForm = this.formBuilder.group({
       'name': [this.countrie.name, [
@@ -82,6 +78,11 @@ export class AppComponent {
           Validators.required        
       ]]
   })
+  this.deleteForm = this.formBuilder.group({
+    'delete': [this.deleteString, [
+      Validators.required
+    ]]
+  });
   PouchDB.sync(this.db, this._remoteDatabase);
 }
 
@@ -94,12 +95,11 @@ export class AppComponent {
   //get specific source
   getFromDB(id){
 
-    if(id===undefined){
-      console.log("ID is undef");
-    }
     this.db.get(id).then(function(countrie){
       console.log(countrie);
-    })
+    }).catch(function(err){
+      console.log(err);
+    })  
   }
 
   getAllfromDB(){
@@ -110,18 +110,6 @@ export class AppComponent {
     }).catch( function (err){
       console.log(err);
     });
-  }
-
-  addDummie(){
-      this.db.put(this.dummie);
-      console.log("addedDummie");
-  }
-
-  getDummie(){
-    this.db.get("Germany").then(function (dummie){
-      console.log(dummie);
-      console.log("Got Dummie");
-    })
   }
 
   addCountrie(){
@@ -140,6 +128,18 @@ export class AppComponent {
     console.log(this.searchString);
     this.db.get(this.searchString).then(function(countrie){
       console.log(countrie);
+    }).catch(function (err){
+      console.log(err);
+    });
+  }
+
+  deleteCountrie(){
+
+    console.log(this.deleteString);
+    this.db.get(this.deleteString).then((countrie) => {
+      this.db.remove(countrie);
+    }).catch(function (err){
+      console.log(err);
     });
   }
 }
