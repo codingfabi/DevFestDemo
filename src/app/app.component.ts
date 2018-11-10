@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import PouchDB from 'pouchdb';
-import {FormGroup, FormBuilder, Validators}  from '@angular/forms';
-import {countrieModel} from './models/countrieModel';
 import PouchDBAuthentication from 'pouchdb-authentication'; 
-import { ValueTransformer } from '@angular/compiler/src/util';
+import { FormGroup, FormBuilder, Validators }  from '@angular/forms';
+import { countryModel } from './models/countryModel';
 
 PouchDB.plugin(PouchDBAuthentication);
 
@@ -13,7 +12,7 @@ PouchDB.plugin(PouchDBAuthentication);
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'defvestapp';
+  title = 'devfestapp';
   private _remoteDatabase: any;
   db = new PouchDB('countries');
 
@@ -21,15 +20,14 @@ export class AppComponent {
   deleteString: string;
   searchString: string;
 
-  countrie : countrieModel = new countrieModel();
-  countrieForm: FormGroup;
+  country : countryModel = new countryModel();
+  countryForm: FormGroup;
   searchForm: FormGroup;
   deleteForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder){
     this._remoteDatabase = new PouchDB('http://localhost:5984/countries',
       {
-
         ajax: {
           rejectUnauthorized: false, timeout: 60000,
         },
@@ -62,14 +60,14 @@ export class AppComponent {
 
 
   ngOnInit(){
-  this.countrieForm = this.formBuilder.group({
-      'name': [this.countrie.name, [
+  this.countryForm = this.formBuilder.group({
+      'name': [this.country.name, [
           Validators.required        
       ]],
-      'capital': [this.countrie.capital, [
+      'capital': [this.country.capital, [
           Validators.required
         ]],
-      'residents' : [this.countrie.residents, [ 
+      'residents' : [this.country.residents, [ 
           Validators.required
         ]]
   })
@@ -95,8 +93,8 @@ export class AppComponent {
   //get specific source
   getFromDB(id){
 
-    this.db.get(id).then(function(countrie){
-      console.log(countrie);
+    this.db.get(id).then(function(country){
+      console.log(country);
     }).catch(function(err){
       console.log(err);
     })  
@@ -112,40 +110,40 @@ export class AppComponent {
     });
   }
 
-  addCountrie(){
+  addCountry(){
 
-      var tempCountrie = {
-        "_id":this.countrie.name,
-        "capital":this.countrie.capital,
-        "residents":this.countrie.residents
+      var tempcountry = {
+        "_id":this.country.name,
+        "capital":this.country.capital,
+        "residents":this.country.residents
       };
 
-      //check if countrie is allready existing, if so just update, else add new. I know it is not single responsibility, but it saves time. 
-      this.db.get(this.countrie.name).then((doc)=> {
+      //check if country is allready existing, if so just update, else add new. I know it is not single responsibility, but it saves time. 
+      this.db.get(this.country.name).then((doc)=> {
         if(doc===undefined){
-          this.db.put(tempCountrie);
+          this.db.put(tempcountry);
         }
         else{
-          tempCountrie["_rev"]=doc._rev;
-          this.db.put(tempCountrie);
+          tempcountry["_rev"]=doc._rev;
+          this.db.put(tempcountry);
         }
       });
     }
   
   searchDB(){
     console.log(this.searchString);
-    this.db.get(this.searchString).then(function(countrie){
-      console.log(countrie);
+    this.db.get(this.searchString).then(function(country){
+      console.log(country);
     }).catch(function (err){
       console.log(err);
     });
   }
 
-  deleteCountrie(){
+  deleteCountry(){
 
     console.log(this.deleteString);
-    this.db.get(this.deleteString).then((countrie) => {
-      this.db.remove(countrie);
+    this.db.get(this.deleteString).then((country) => {
+      this.db.remove(country);
     }).catch(function (err){
       console.log(err);
     });
