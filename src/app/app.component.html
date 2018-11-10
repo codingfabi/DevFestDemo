@@ -1,31 +1,31 @@
 <div class="containerdiv">
-  <form id = "inputform" [formGroup] = 'countryForm' novalidate (ngSubmit)="countryForm.valid && addCountry()">
+  <form #inputForm="ngForm" (ngSubmit)="inputForm.valid && addCountry()">
     <mat-form-field>
-      <input matInput placeholder="Country Name" id="country" formControlName='name' [(ngModel)]="country.name" />
+      <input matInput placeholder="Country Name" required [(ngModel)]="country.name" name="country"/>
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Country Residents" id="residents" formControlName='residents' [(ngModel)]="country.residents"/>
+      <input matInput placeholder="Country Residents" required [(ngModel)]="country.residents" name="country"/>
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Country Capital" id="capital" formControlName='capital' [(ngModel)]="country.capital"/>
+      <input matInput placeholder="Country Capital" required [(ngModel)]="country.capital" name="country"/>
     </mat-form-field>
     <button mat-button class="mat-raised-button" type="submit" >Add Country</button>
   </form>
 
-  <form [formGroup]='searchForm' novalidate (ngSubmit)="searchForm.valid && searchDB()">
+  <form #searchForm="ngForm" (ngSubmit)="searchForm.valid && searchDB()">
     <mat-form-field>
-      <input matInput placeholder="Country Name" id="search" formControlName="search" [(ngModel)]="searchString"/>
+      <input matInput placeholder="Country Name" required name="search" [(ngModel)]="searchString"/>
     </mat-form-field>
     <button mat-button class="mat-raised-button" type="submit">Search for Country</button>
   </form>
 
   <button mat-button class="mat-raised-button" (click)="getAllFromDB()">Get All from DB</button>
 
-  <form [formGroup]='deleteForm' novalidate (ngSubmit)="searchForm.valid && deleteCountry()">
+  <form #deleteForm="ngForm" (ngSubmit)="deleteForm.valid && deleteCountry()">
     <mat-form-field>
-      <input matInput placeholder="Country Name" id="delete" formControlName="delete" [(ngModel)]="deleteString"/>
+      <input matInput placeholder="Country Name" name="delete" required [(ngModel)]="deleteString"/>
     </mat-form-field>
     <button mat-button class="mat-raised-button" type="submit">Delete Country</button>
   </form>

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import PouchDB from 'pouchdb';
-import PouchDBAuthentication from 'pouchdb-authentication'; 
-import { FormGroup, FormBuilder, Validators }  from '@angular/forms';
+import PouchDBAuthentication from 'pouchdb-authentication';
 import { countryModel } from './models/countryModel';
 import { config } from './config'
 
@@ -35,11 +34,8 @@ export class AppComponent {
   searchString: string;
 
   country : countryModel = new countryModel();
-  countryForm: FormGroup;
-  searchForm: FormGroup;
-  deleteForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor() {
     const ajaxOpts = {
       ajax: {
         headers: {
@@ -54,30 +50,9 @@ export class AppComponent {
   }
 
 
-  ngOnInit(){
-  this.countryForm = this.formBuilder.group({
-      'name': [this.country.name, [
-          Validators.required        
-      ]],
-      'capital': [this.country.capital, [
-          Validators.required
-        ]],
-      'residents' : [this.country.residents, [ 
-          Validators.required
-        ]]
-  });
-  this.searchForm = this.formBuilder.group({
-      'search': [this.searchString, [
-          Validators.required        
-      ]]
-  });
-  this.deleteForm = this.formBuilder.group({
-    'delete': [this.deleteString, [
-      Validators.required
-    ]]
-  });
-  PouchDB.sync(this._localDatabase, this._remoteDatabase);
-}
+  ngOnInit() {
+    PouchDB.sync(this._localDatabase, this._remoteDatabase);
+  }
 
   addToDB(doc){
     return this._localDatabase.put(doc)
