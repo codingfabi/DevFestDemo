@@ -120,8 +120,16 @@ export class AppComponent {
         "residents":this.countrie.residents
       };
 
-      this.addToDB(tempCountrie);
-      //this.getFromDB(this.countrie.name);
+      //check if countrie is allready existing, if so just update, else add new. I know it is not single responsibility, but it saves time. 
+      this.db.get(this.countrie.name).then((doc)=> {
+        if(doc===undefined){
+          this.db.put(tempCountrie);
+        }
+        else{
+          tempCountrie["_rev"]=doc._rev;
+          this.db.put(tempCountrie);
+        }
+      });
     }
   
   searchDB(){
